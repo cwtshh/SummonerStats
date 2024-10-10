@@ -1,0 +1,35 @@
+name: summonerstats
+services:
+  api:
+    container_name: api
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    command: npm run dev
+    restart: always
+    depends_on:
+      - db
+  db:
+    container_name: database
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - databasedata-volume:/data/db
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
+volumes:
+  databasedata-volume:
